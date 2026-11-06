@@ -9,4 +9,5 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Add offline RAG evaluation: JSONL loaders, recall/precision/MRR/nDCG, SQuAD exact match and token F1, a byte-stable JSON report, threshold checks and the `python -m rag_eval` CLI.
 - Initial project structure from the factory utility template.

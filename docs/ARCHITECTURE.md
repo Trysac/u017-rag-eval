@@ -2,27 +2,28 @@
 
 ## Purpose
 
-`trysac-rag-eval` is a small, dependency-free Python library: Evaluate a RAG system offline from golden and results JSONL files with recall, precision, MRR, nDCG and SQuAD-style answer metrics, and gate CI on thresholds
+`trysac-rag-eval` is a small, dependency-free Python library and command line tool (`python -m rag_eval`) that scores RAG results offline against a golden dataset and gates CI on thresholds.
 
 ## Shape
 
 ```text
 caller code --> rag_eval (public API in __init__.py)
                     |
-                    +-- pure functions, no I/O, no global state
+                    +-- loader.py    strict JSONL reading and record validation
+                    +-- metrics.py   retrieval and SQuAD answer metrics (pure)
+                    +-- report.py    evaluate(), EvalReport, to_json, check, worst
+                    +-- errors.py    RagEvalError and clip()
+                    +-- __main__.py  CLI, reads files and writes the optional JSON report
 ```
 
-- **Public API**: the names listed in `__all__` of `src/rag_eval/__init__.py`. Anything else is
-  internal and may change without a major version.
-- **Errors**: invalid input raises built-in exceptions (`ValueError`, `TypeError`) with a clear
-  message; the library never prints or exits.
-- **Side effects**: none. If a feature needs I/O, isolate it in its own module behind a small
-  interface and record the choice in an ADR.
+- **Public API**: the names listed in `__all__` of `src/rag_eval/__init__.py`: `EvalReport`, `RagEvalError`, `__version__`, `answer_metrics`, `evaluate`, `load_jsonl`, `retrieval_metrics`.
+- **Errors**: invalid input raises `RagEvalError`, a subclass of `ValueError`, with a stable `code`. The library itself does not print or exit; only the CLI does.
+- **Side effects**: file reading happens only in `load_jsonl` and the CLI. The metric and report functions are pure.
+- **Logging**: a `NullHandler` is attached to the package logger; the library never configures logging and never logs input text.
 
 ## Quality contract
 
-`scripts/check.py` is the single definition of the gates; `fabrica.json` tells the factory and CI
-how to run it. See [TESTING.md](TESTING.md).
+See [TESTING.md](TESTING.md) for the test suite and coverage policy.
 
 ## Decisions
 
