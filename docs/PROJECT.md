@@ -2,12 +2,12 @@
 
 ## Objective
 
-Evaluate a RAG system offline from golden and results JSONL files with recall, precision, MRR, nDCG and SQuAD-style answer metrics, and gate CI on thresholds
+Give RAG teams a quick, repeatable, offline score for retrieval and answer quality, computed from a golden dataset and a results file, with a byte-stable JSON report and CI threshold gates. No LLM is used and the system under test is never run.
 
 ## Scope
 
-- In scope: the public API documented in [README.md](../README.md), typed and tested.
-- Out of scope: anything that needs runtime dependencies or I/O without an accepted ADR.
+- In scope: retrieval metrics (recall@k, precision@k, MRR, nDCG@k), SQuAD v1.1 style answer metrics (exact match, token F1), strict JSONL loading, the `evaluate` report, threshold checks, worst-item listing, and the `python -m rag_eval` command line.
+- Out of scope: running the RAG system, LLM-judged metrics, synthetic dataset generation, dashboards, and any runtime dependency.
 
 ## Timeline
 
