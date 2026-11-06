@@ -77,7 +77,8 @@ def test_retrieval_acceptance_literals() -> None:
         "], k=3) returns {",
         ": 2/3, ",
         ": 0.5, ",
-        ": 1 / math.log2(3)} (duplicates count once at their first position), and retrieval_metrics({",
+        ": 1 / math.log2(3)} (duplicates count once at their first position), "
+        "and retrieval_metrics({",
     ]
     assert len(literals) == 4
 
