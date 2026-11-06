@@ -172,7 +172,8 @@ def test_load_dataset_and_results(tmp_path: Path) -> None:
 
 def test_null_optional_fields_are_absent(tmp_path: Path) -> None:
     row = drow("a", ["d"], reference_answer=None)
-    assert "reference_answer" not in load_jsonl(write_rows(tmp_path / "d.jsonl", [row]), "dataset")[0]
+    path = write_rows(tmp_path / "d.jsonl", [row])
+    assert "reference_answer" not in load_jsonl(path, "dataset")[0]
 
 
 def test_dataset_line_three_without_expected_doc_ids(tmp_path: Path) -> None:
