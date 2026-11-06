@@ -67,22 +67,6 @@ def test_retrieval_metrics_acceptance_example() -> None:
         assert abs(got[key] - value) <= 1e-12
 
 
-def test_retrieval_acceptance_literals() -> None:
-    # Acceptance text, verbatim:
-    # ], k=3) returns {
-    # : 2/3,
-    # : 0.5,
-    # : 1 / math.log2(3)} (duplicates count once at their first position), and retrieval_metrics({
-    literals = [
-        "], k=3) returns {",
-        ": 2/3, ",
-        ": 0.5, ",
-        ": 1 / math.log2(3)} (duplicates count once at their first position), "
-        "and retrieval_metrics({",
-    ]
-    assert len(literals) == 4
-
-
 def test_retrieval_duplicates_count_once_at_first_position() -> None:
     assert retrieval_metrics({"a"}, ["b", "b", "a"], k=2) == {
         "recall@2": 1.0,

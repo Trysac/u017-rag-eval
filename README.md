@@ -8,8 +8,11 @@ Evaluate a RAG system offline from golden and results JSONL files with recall, p
 
 ## Problem
 
-Describe in two or three sentences the concrete problem this utility solves, who hits it, and what
-they do today without it. Replace this paragraph when the first real feature lands.
+RAG changes such as a new chunker or embedding model often ship on intuition because there is no quick,
+repeatable score. Full evaluation frameworks such as RAGAS call an LLM for many metrics, which is slow,
+costly and non-deterministic in CI. rag-eval computes recall, precision, MRR, nDCG and SQuAD-style answer
+metrics offline from a golden dataset and a results file produced by your pipeline, writes a byte-stable
+JSON report and fails CI on thresholds. It never runs the system under test and uses no LLM.
 
 ## Install
 
@@ -24,17 +27,34 @@ Requires Python 3.10 or newer. No runtime dependencies.
 ## Usage
 
 ```python
-import rag_eval
+from pathlib import Path
 
-# normalize() trims surrounding whitespace and lower-cases the text.
-print(rag_eval.normalize("  Hello World "))  # -> "hello world"
+from rag_eval import answer_metrics, evaluate, load_jsonl, retrieval_metrics
 
-# Blank input is rejected explicitly instead of returning an empty string.
-try:
-    rag_eval.normalize("   ")
-except ValueError as exc:
-    print(f"rejected: {exc}")
+# Dataset lines: {"id", "question", "expected_doc_ids", "reference_answer"?}
+# Results lines: {"id", "retrieved_doc_ids", "answer"?}
+report = evaluate(
+    load_jsonl(Path("golden.jsonl"), "dataset"),
+    load_jsonl(Path("results.jsonl"), "results"),
+    k=5,
+)
+failed = report.check({"recall@5": 0.8})  # names of metrics below threshold
+print(report.to_json())
+
+print(retrieval_metrics({"a", "c"}, ["a", "b", "c", "d"], k=3))
+print(answer_metrics("The Cat sat.", "cat sat"))  # exact_match 1.0, token_f1 1.0
 ```
+
+Command line:
+
+```sh
+python -m rag_eval --dataset golden.jsonl --results results.jsonl --threshold recall@5=0.8 --out report.json
+```
+
+Exit codes: `0` all thresholds pass, `1` at least one metric is below its threshold, `2` usage, IO or
+dataset errors.
+
+Unlike RAGAS, no metric calls an LLM, so scores are deterministic and free to compute.
 
 ## Documentation
 
