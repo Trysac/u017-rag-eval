@@ -19,6 +19,9 @@ classifiers = [
 ]
 dependencies = []
 
+[project.scripts]
+rag-eval = "rag_eval.__main__:main"
+
 [project.urls]
 Homepage = "https://github.com/Trysac/u017-rag-eval"
 Source = "https://github.com/Trysac/u017-rag-eval"
